@@ -1,22 +1,233 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>堕落电竞</title>
-  </head>
-  <body>
-    <iframe 
-      src="https://docs.google.com/presentation/d/e/2PACX-1vQU4FiacwkDYa8bnRUcfVTsQ4P97arKuSnKJ6Fy3vejirIRRhw9Su795_p2JLwiZSYAAUwXmw1vl4QB/pubembed?start=false&loop=false" 
-      frameborder="0" 
-      width="100%" 
-      height="100%" 
-      style="position:absolute; top:0; left:0;" 
-      allowfullscreen="true" 
-      mozallowfullscreen="true" 
-      webkitallowfullscreen="true">
-    </iframe>
-  </body>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>武器改枪码展示</title>
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    height: 100vh;
+}
+
+/* 左侧小分类 */
+.sidebar {
+    width: 150px;
+    background-color: #2c3e50;
+    color: white;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.category {
+    background-color: #34495e;
+    padding: 5px;
+    text-align: center;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.category:hover { background-color: #1abc9c; }
+
+/* 左下角按钮容器 */
+.sidebar-buttons {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.sidebar-buttons button {
+    padding: 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+}
+#contact-btn { background-color: #3498db; }
+#publish-btn { background-color: #2ecc71; }
+
+/* 右侧区域 */
+.content, .contact-page, .publish-page {
+    flex: 1;
+    padding: 15px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+/* 武器卡片 */
+.weapon-card {
+    background-color: #ecf0f1;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+.weapon-image {
+    width: 100%;
+    aspect-ratio: 6 / 2;
+    object-fit: cover;
+    border-radius: 8px 8px 0 0;
+}
+.weapon-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #bdc3c7;
+    padding: 5px 10px;
+    border-radius: 0 0 8px 8px;
+    font-size: 14px;
+}
+.weapon-info input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+}
+.weapon-info .rating {
+    color: #f1c40f;
+    margin-left: 10px;
+    white-space: nowrap;
+}
+
+/* 联系和发布页面样式 */
+.contact-page, .publish-page {
+    display: none; /* 默认隐藏 */
+}
+button.back-btn {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #34495e;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+    <!-- 10个小分类 -->
+    <div class="category" onclick="showCategory(0)">分类1</div>
+    <div class="category" onclick="showCategory(1)">分类2</div>
+    <div class="category" onclick="showCategory(2)">分类3</div>
+    <div class="category" onclick="showCategory(3)">分类4</div>
+    <div class="category" onclick="showCategory(4)">分类5</div>
+    <div class="category" onclick="showCategory(5)">分类6</div>
+    <div class="category" onclick="showCategory(6)">分类7</div>
+    <div class="category" onclick="showCategory(7)">分类8</div>
+    <div class="category" onclick="showCategory(8)">分类9</div>
+    <div class="category" onclick="showCategory(9)">分类10</div>
+
+    <!-- 左下角按钮 -->
+    <div class="sidebar-buttons">
+        <button id="contact-btn" onclick="showContact()">联系投稿</button>
+        <button id="publish-btn" onclick="showPublish()">发布要求</button>
+    </div>
+</div>
+
+<!-- 主内容 -->
+<div class="content" id="weapon-list">
+    <!-- 武器卡片会在这里生成 -->
+</div>
+
+<!-- 联系我们页面 -->
+<div class="contact-page" id="contact-page">
+    <h1>联系投稿</h1>
+    <!-- 图片卡片示例 -->
+    <div class="weapon-card">
+        <img src="https://via.placeholder.com/600x200?text=联系投稿图片1" class="weapon-image">
+        <div class="weapon-info">
+            <input type="text" value="这里输入联系投稿说明1">
+            <span class="rating">⭐⭐⭐⭐⭐</span>
+        </div>
+    </div>
+    <div class="weapon-card">
+        <img src="https://via.placeholder.com/600x200?text=联系投稿图片2" class="weapon-image">
+        <div class="weapon-info">
+            <input type="text" value="这里输入联系投稿说明2">
+            <span class="rating">⭐⭐⭐⭐⭐</span>
+        </div>
+    </div>
+    <button class="back-btn" onclick="showMain()">返回主页面</button>
+</div>
+
+<!-- 发布要求页面 -->
+<div class="publish-page" id="publish-page">
+    <h1>发布要求</h1>
+    <!-- 图片卡片示例 -->
+    <div class="weapon-card">
+        <img src="发布说明.png" class="weapon-image">
+        <div class="weapon-info">
+            <input type="text" value="这里输入发布要求说明1">
+            <span class="rating">⭐⭐⭐⭐⭐</span>
+        </div>
+    </div>
+    <div class="weapon-card">
+        <img src="https://via.placeholder.com/600x200?text=发布要求图片2" class="weapon-image">
+        <div class="weapon-info">
+            <input type="text" value="这里输入发布要求说明2">
+            <span class="rating">⭐⭐⭐⭐⭐</span>
+        </div>
+    </div>
+    <button class="back-btn" onclick="showMain()">返回主页面</button>
+</div>
+
+<script>
+// 示例占位数据
+const categories = Array.from({length: 10}, (_, i) => `分类${i+1}`);
+const weapons = Array.from({length: 5}, (_, i) => ({
+    img: 'https://via.placeholder.com/600x200?text=图片',
+    text: `这里输入武器说明 ${i+1}`,
+    rating: '⭐⭐⭐⭐⭐'
+}));
+
+function showCategory(index) {
+    // 显示主页面内容，隐藏其他页面
+    showMain();
+
+    const list = document.getElementById('weapon-list');
+    list.innerHTML = '';
+    weapons.forEach(w => {
+        const card = document.createElement('div');
+        card.className = 'weapon-card';
+        card.innerHTML = `
+            <img src="${w.img}" class="weapon-image">
+            <div class="weapon-info">
+                <input type="text" value="${w.text}">
+                <span class="rating">${w.rating}</span>
+            </div>
+        `;
+        list.appendChild(card);
+    });
+}
+
+// 显示主页面
+function showMain() {
+    document.getElementById('weapon-list').style.display = 'block';
+    document.getElementById('contact-page').style.display = 'none';
+    document.getElementById('publish-page').style.display = 'none';
+}
+
+// 显示联系我们
+function showContact() {
+    document.getElementById('weapon-list').style.display = 'none';
+    document.getElementById('contact-page').style.display = 'block';
+    document.getElementById('publish-page').style.display = 'none';
+}
+
+// 显示发布要求
+function showPublish() {
+    document.getElementById('weapon-list').style.display = 'none';
+    document.getElementById('contact-page').style.display = 'none';
+    document.getElementById('publish-page').style.display = 'block';
+}
+
+// 默认显示第一个分类
+showCategory(0);
+</script>
+
+</body>
 </html>
-
-
 
