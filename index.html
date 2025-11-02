@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>武器改枪码展示</title>
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    height: 100vh;
+}
+.sidebar {
+    width: 180px;
+    background-color: #2c3e50;
+    color: white;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.category {
+    background-color: #34495e;
+    padding: 8px;
+    text-align: center;
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+}
+.category:hover { background-color: #1abc9c; }
+.sidebar-buttons {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.sidebar-buttons button {
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+    font-size: 14px;
+}
+#contact-btn { background-color: #3498db; }
+#publish-btn { background-color: #2ecc71; }
+.content, .contact-page, .publish-page {
+    flex: 1;
+    padding: 15px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+}
+.weapon-card {
+    background-color: #ecf0f1;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 180px;       /* 类似手机屏幕宽度 */
+    height: 320px;      /* 类似手机屏幕高度，9:16比例 */
+    display: flex;
+    flex-direction: column;
+}
+.weapon-image {
+    width: 100%;
+    aspect-ratio: 9 / 16; /* 手机截图比例 */
+    object-fit: cover;
+}
+.weapon-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #bdc3c7;
+    padding: 4px 6px;
+    font-size: 14px;
+}
+.weapon-info input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+}
+.weapon-info .rating {
+    color: #f1c40f;
+    margin-left: 4px;
+    white-space: nowrap;
+}
+.weapon-code {
+    display: flex;
+    justify-content: space-between;
+    gap: 4px;
+    margin-top: 4px;
+}
+.weapon-code .code-block {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background-color: #dfe6e9;
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+.weapon-code .code-block input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 12px;
+}
+.weapon-code .code-block button {
+    margin-left: 4px;
+    padding: 2px 4px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+.weapon-code .code-label {
+    margin-right: 2px;
+    font-size: 12px;
+    color: #2d3436;
+}
+.contact-page .weapon-card,
+.publish-page .weapon-card {
+    width: 180px;
+    height: 320px;
+}
+.contact-page, .publish-page {
+    display: none;
+}
+button.back-btn {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #34495e;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar" id="sidebar"></div>
+
+<div class="content" id="weapon-list"></div>
+
+<div class="contact-page" id="contact-page">
+    <h1>联系投稿</h1>
+    <div class="weapon-card">
+        <img src="联系投稿图片1.png" class="weapon-image">
+        <div class="weapon-info">
+            <input type="text" value="这里输入联系投稿说明1">
+            <span class="rating">⭐⭐⭐⭐⭐</span>
+        </div>
+        <div class="weapon-code">
+            <div class="code-block">
+                <span class="code-label">国服:</span>
+                <input type="text" value="国服改枪码示例1" id="cn-contact1">
+                <button onclick="copyCode('cn-contact1')">复制</button>
+            </div>
+            <div class="code-block">
+                <span class="code-label">国际服:</span>
+                <input type="text" value="国际服改枪码示例1" id="intl-contact1">
+                <button onclick="copyCode('intl-contact1')">复制</button>
+            </div>
+        </div>
+    </div>
+    <div class="weapon-card">
+        <img src="联系投稿图片2.png" class="weapon-image">
+        <div class="weapon-info">
+            <input type="text" value="这里输入联系投稿说明2">
+            <span class="rating">⭐⭐⭐⭐⭐</span>
+        </div>
+        <div class="weapon-code">
+            <div class="code-block">
+                <span class="code-label">国服:</span>
+                <input type="text" value="国服改枪码示例2" id="cn-contact2">
+                <button onclick="copyCode('cn-contact2')">复制</button>
+            </div>
+            <div class="code-block">
+                <span class="code-label">国际服:</span>
+                <input type="text" value="国际服改枪码示例2" id="intl-contact2">
+                <button onclick="copyCode('intl-contact2')">复制</button>
+            </div>
+        </div>
+    </div>
+    <button class="back-btn" onclick="showMain()">返回主页面</button>
+</div>
+
+<div class="publish-page" id="publish-page">
+    <h1>发布要求</h1>
+    <div class="weapon-card">
+        <img src="发布说明.png" class="weapon-image">
+        <div class="weapon-info">
+            <input type="text" value="这里输入发布要求说明1">
+            <span class="rating">⭐⭐⭐⭐⭐</span>
+        </div>
+        <div class="weapon-code">
+            <div class="code-block">
+                <span class="code-label">国服:</span>
+                <input type="text" value="国服改枪码示例" id="cn-publish1">
+                <button onclick="copyCode('cn-publish1')">复制</button>
+            </div>
+            <div class="code-block">
+                <span class="code-label">国际服:</span>
+                <input type="text" value="国际服改枪码示例" id="intl-publish1">
+                <button onclick="copyCode('intl-publish1')">复制</button>
+            </div>
+        </div>
+    </div>
+    <button class="back-btn" onclick="showMain()">返回主页面</button>
+</div>
+
+<script>
+const categories = [
+    '步枪', '冲锋枪', '狙击枪', '散弹枪', '手枪', '精确射击步枪', '轻机枪'
+];
+
+const sidebar = document.getElementById('sidebar');
+
+// 动态生成左侧分类按钮
+categories.forEach((name, index) => {
+    const div = document.createElement('div');
+    div.className = 'category';
+    div.innerText = name;
+    div.onclick = () => showCategory(index);
+    sidebar.appendChild(div);
+});
+
+// 添加联系投稿和发布要求按钮
+const sidebarButtons = document.createElement('div');
+sidebarButtons.className = 'sidebar-buttons';
+sidebarButtons.innerHTML = `
+    <button id="contact-btn" onclick="showContact()">联系投稿</button>
+    <button id="publish-btn" onclick="showPublish()">发布要求</button>
+`;
+sidebar.appendChild(sidebarButtons);
+
+// 每个分类生成10个大方框
+const weapons = Array.from({length: 10}, (_, i) => ({
+    img: '图片' + (i+1) + '.png',
+    text: `这里输入武器说明 ${i+1}`,
+    cnCode: `国服改枪码 ${i+1}`,
+    intlCode: `国际服改枪码 ${i+1}`,
+    rating: '⭐⭐⭐⭐⭐'
+}));
+
+function showCategory(index) {
+    showMain();
+    const list = document.getElementById('weapon-list');
+    list.innerHTML = '';
+    weapons.forEach((w, i) => {
+        const card = document.createElement('div');
+        card.className = 'weapon-card';
+        const cnId = 'cn-code-' + index + '-' + i;
+        const intlId = 'intl-code-' + index + '-' + i;
+        card.innerHTML = `
+            <img src="${w.img}" class="weapon-image">
+            <div class="weapon-info">
+                <input type="text" value="${w.text}">
+                <span class="rating">${w.rating}</span>
+            </div>
+            <div class="weapon-code">
+                <div class="code-block">
+                    <span class="code-label">国服:</span>
+                    <input type="text" value="${w.cnCode}" id="${cnId}">
+                    <button onclick="copyCode('${cnId}')">复制</button>
+                </div>
+                <div class="code-block">
+                    <span class="code-label">国际服:</span>
+                    <input type="text" value="${w.intlCode}" id="${intlId}">
+                    <button onclick="copyCode('${intlId}')">复制</button>
+                </div>
+            </div>
+        `;
+        list.appendChild(card);
+    });
+}
+
+function copyCode(id) {
+    const input = document.getElementById(id);
+    input.select();
+    input.setSelectionRange(0, 99999); // 手机兼容
+    document.execCommand("copy");
+    alert("已复制: " + input.value);
+}
+
+function showMain() {
+    document.getElementById('weapon-list').style.display = 'flex';
+    document.getElementById('contact-page').style.display = 'none';
+    document.getElementById('publish-page').style.display = 'none';
+}
+
+function showContact() {
+    document.getElementById('weapon-list').style.display = 'none';
+    document.getElementById('contact-page').style.display = 'flex';
+    document.getElementById('publish-page').style.display = 'none';
+}
+
+function showPublish() {
+    document.getElementById('weapon-list').style.display = 'none';
+    document.getElementById('contact-page').style.display = 'none';
+    document.getElementById('publish-page').style.display = 'flex';
+}
+
+// 默认显示第一分类
+showCategory(0);
+</script>
+
+</body>
+</html>
+
+
