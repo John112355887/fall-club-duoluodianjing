@@ -51,16 +51,23 @@ body {
     padding: 15px;
     box-sizing: border-box;
     overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
 }
 .weapon-card {
     background-color: #ecf0f1;
     border-radius: 8px;
-    margin-bottom: 20px;
     overflow: hidden;
+    width: 180px;       /* 类似手机屏幕宽度 */
+    height: 320px;      /* 类似手机屏幕高度，9:16比例 */
+    display: flex;
+    flex-direction: column;
 }
 .weapon-image {
     width: 100%;
-    aspect-ratio: 6 / 2;
+    aspect-ratio: 9 / 16; /* 手机截图比例 */
     object-fit: cover;
 }
 .weapon-info {
@@ -68,7 +75,7 @@ body {
     justify-content: space-between;
     align-items: center;
     background-color: #bdc3c7;
-    padding: 8px 10px;
+    padding: 4px 6px;
     font-size: 14px;
 }
 .weapon-info input {
@@ -79,14 +86,13 @@ body {
 }
 .weapon-info .rating {
     color: #f1c40f;
-    margin-left: 10px;
+    margin-left: 4px;
     white-space: nowrap;
 }
-/* 改枪码双栏布局 */
 .weapon-code {
     display: flex;
     justify-content: space-between;
-    gap: 6px;
+    gap: 4px;
     margin-top: 4px;
 }
 .weapon-code .code-block {
@@ -94,18 +100,18 @@ body {
     display: flex;
     align-items: center;
     background-color: #dfe6e9;
-    padding: 4px 6px;
+    padding: 2px 4px;
     border-radius: 4px;
 }
 .weapon-code .code-block input {
     flex: 1;
     border: none;
     background: transparent;
-    font-size: 14px;
+    font-size: 12px;
 }
 .weapon-code .code-block button {
-    margin-left: 6px;
-    padding: 2px 6px;
+    margin-left: 4px;
+    padding: 2px 4px;
     background-color: #3498db;
     color: white;
     border: none;
@@ -114,9 +120,14 @@ body {
     font-size: 12px;
 }
 .weapon-code .code-label {
-    margin-right: 4px;
+    margin-right: 2px;
     font-size: 12px;
     color: #2d3436;
+}
+.contact-page .weapon-card,
+.publish-page .weapon-card {
+    width: 180px;
+    height: 320px;
 }
 .contact-page, .publish-page {
     display: none;
@@ -149,13 +160,32 @@ button.back-btn {
         <div class="weapon-code">
             <div class="code-block">
                 <span class="code-label">国服:</span>
-                <input type="text" value="国服改枪码示例1" id="cn-code1">
-                <button onclick="copyCode('cn-code1')">复制</button>
+                <input type="text" value="国服改枪码示例1" id="cn-contact1">
+                <button onclick="copyCode('cn-contact1')">复制</button>
             </div>
             <div class="code-block">
                 <span class="code-label">国际服:</span>
-                <input type="text" value="国际服改枪码示例1" id="intl-code1">
-                <button onclick="copyCode('intl-code1')">复制</button>
+                <input type="text" value="国际服改枪码示例1" id="intl-contact1">
+                <button onclick="copyCode('intl-contact1')">复制</button>
+            </div>
+        </div>
+    </div>
+    <div class="weapon-card">
+        <img src="联系投稿图片2.png" class="weapon-image">
+        <div class="weapon-info">
+            <input type="text" value="这里输入联系投稿说明2">
+            <span class="rating">⭐⭐⭐⭐⭐</span>
+        </div>
+        <div class="weapon-code">
+            <div class="code-block">
+                <span class="code-label">国服:</span>
+                <input type="text" value="国服改枪码示例2" id="cn-contact2">
+                <button onclick="copyCode('cn-contact2')">复制</button>
+            </div>
+            <div class="code-block">
+                <span class="code-label">国际服:</span>
+                <input type="text" value="国际服改枪码示例2" id="intl-contact2">
+                <button onclick="copyCode('intl-contact2')">复制</button>
             </div>
         </div>
     </div>
@@ -173,13 +203,13 @@ button.back-btn {
         <div class="weapon-code">
             <div class="code-block">
                 <span class="code-label">国服:</span>
-                <input type="text" value="国服改枪码示例2" id="cn-code2">
-                <button onclick="copyCode('cn-code2')">复制</button>
+                <input type="text" value="国服改枪码示例" id="cn-publish1">
+                <button onclick="copyCode('cn-publish1')">复制</button>
             </div>
             <div class="code-block">
                 <span class="code-label">国际服:</span>
-                <input type="text" value="国际服改枪码示例2" id="intl-code2">
-                <button onclick="copyCode('intl-code2')">复制</button>
+                <input type="text" value="国际服改枪码示例" id="intl-publish1">
+                <button onclick="copyCode('intl-publish1')">复制</button>
             </div>
         </div>
     </div>
@@ -211,7 +241,8 @@ sidebarButtons.innerHTML = `
 `;
 sidebar.appendChild(sidebarButtons);
 
-const weapons = Array.from({length: 5}, (_, i) => ({
+// 每个分类生成10个大方框
+const weapons = Array.from({length: 10}, (_, i) => ({
     img: '图片' + (i+1) + '.png',
     text: `这里输入武器说明 ${i+1}`,
     cnCode: `国服改枪码 ${i+1}`,
@@ -260,21 +291,21 @@ function copyCode(id) {
 }
 
 function showMain() {
-    document.getElementById('weapon-list').style.display = 'block';
+    document.getElementById('weapon-list').style.display = 'flex';
     document.getElementById('contact-page').style.display = 'none';
     document.getElementById('publish-page').style.display = 'none';
 }
 
 function showContact() {
     document.getElementById('weapon-list').style.display = 'none';
-    document.getElementById('contact-page').style.display = 'block';
+    document.getElementById('contact-page').style.display = 'flex';
     document.getElementById('publish-page').style.display = 'none';
 }
 
 function showPublish() {
     document.getElementById('weapon-list').style.display = 'none';
     document.getElementById('contact-page').style.display = 'none';
-    document.getElementById('publish-page').style.display = 'block';
+    document.getElementById('publish-page').style.display = 'flex';
 }
 
 // 默认显示第一分类
@@ -283,4 +314,5 @@ showCategory(0);
 
 </body>
 </html>
+
 
