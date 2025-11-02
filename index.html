@@ -63,16 +63,15 @@ body {
     aspect-ratio: 6 / 2;
     object-fit: cover;
 }
-.weapon-info, .weapon-code {
+.weapon-info {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: #bdc3c7;
     padding: 8px 10px;
     font-size: 14px;
-    margin-top: 4px;
 }
-.weapon-info input, .weapon-code input {
+.weapon-info input {
     flex: 1;
     border: none;
     background: transparent;
@@ -83,14 +82,41 @@ body {
     margin-left: 10px;
     white-space: nowrap;
 }
-.weapon-code button {
-    margin-left: 8px;
+/* 改枪码双栏布局 */
+.weapon-code {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    margin-top: 4px;
+}
+.weapon-code .code-block {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background-color: #dfe6e9;
+    padding: 4px 6px;
+    border-radius: 4px;
+}
+.weapon-code .code-block input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+}
+.weapon-code .code-block button {
+    margin-left: 6px;
     padding: 2px 6px;
     background-color: #3498db;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    font-size: 12px;
+}
+.weapon-code .code-label {
+    margin-right: 4px;
+    font-size: 12px;
+    color: #2d3436;
 }
 .contact-page, .publish-page {
     display: none;
@@ -121,19 +147,16 @@ button.back-btn {
             <span class="rating">⭐⭐⭐⭐⭐</span>
         </div>
         <div class="weapon-code">
-            <input type="text" value="改枪码示例1" id="code1">
-            <button onclick="copyCode('code1')">复制</button>
-        </div>
-    </div>
-    <div class="weapon-card">
-        <img src="联系投稿图片2.png" class="weapon-image">
-        <div class="weapon-info">
-            <input type="text" value="这里输入联系投稿说明2">
-            <span class="rating">⭐⭐⭐⭐⭐</span>
-        </div>
-        <div class="weapon-code">
-            <input type="text" value="改枪码示例2" id="code2">
-            <button onclick="copyCode('code2')">复制</button>
+            <div class="code-block">
+                <span class="code-label">国服:</span>
+                <input type="text" value="国服改枪码示例1" id="cn-code1">
+                <button onclick="copyCode('cn-code1')">复制</button>
+            </div>
+            <div class="code-block">
+                <span class="code-label">国际服:</span>
+                <input type="text" value="国际服改枪码示例1" id="intl-code1">
+                <button onclick="copyCode('intl-code1')">复制</button>
+            </div>
         </div>
     </div>
     <button class="back-btn" onclick="showMain()">返回主页面</button>
@@ -148,19 +171,16 @@ button.back-btn {
             <span class="rating">⭐⭐⭐⭐⭐</span>
         </div>
         <div class="weapon-code">
-            <input type="text" value="改枪码示例3" id="code3">
-            <button onclick="copyCode('code3')">复制</button>
-        </div>
-    </div>
-    <div class="weapon-card">
-        <img src="发布要求图片2.png" class="weapon-image">
-        <div class="weapon-info">
-            <input type="text" value="这里输入发布要求说明2">
-            <span class="rating">⭐⭐⭐⭐⭐</span>
-        </div>
-        <div class="weapon-code">
-            <input type="text" value="改枪码示例4" id="code4">
-            <button onclick="copyCode('code4')">复制</button>
+            <div class="code-block">
+                <span class="code-label">国服:</span>
+                <input type="text" value="国服改枪码示例2" id="cn-code2">
+                <button onclick="copyCode('cn-code2')">复制</button>
+            </div>
+            <div class="code-block">
+                <span class="code-label">国际服:</span>
+                <input type="text" value="国际服改枪码示例2" id="intl-code2">
+                <button onclick="copyCode('intl-code2')">复制</button>
+            </div>
         </div>
     </div>
     <button class="back-btn" onclick="showMain()">返回主页面</button>
@@ -194,7 +214,8 @@ sidebar.appendChild(sidebarButtons);
 const weapons = Array.from({length: 5}, (_, i) => ({
     img: '图片' + (i+1) + '.png',
     text: `这里输入武器说明 ${i+1}`,
-    code: `改枪码 ${i+1}`,
+    cnCode: `国服改枪码 ${i+1}`,
+    intlCode: `国际服改枪码 ${i+1}`,
     rating: '⭐⭐⭐⭐⭐'
 }));
 
@@ -205,7 +226,8 @@ function showCategory(index) {
     weapons.forEach((w, i) => {
         const card = document.createElement('div');
         card.className = 'weapon-card';
-        const codeId = 'code-cat-' + index + '-' + i;
+        const cnId = 'cn-code-' + index + '-' + i;
+        const intlId = 'intl-code-' + index + '-' + i;
         card.innerHTML = `
             <img src="${w.img}" class="weapon-image">
             <div class="weapon-info">
@@ -213,8 +235,16 @@ function showCategory(index) {
                 <span class="rating">${w.rating}</span>
             </div>
             <div class="weapon-code">
-                <input type="text" value="${w.code}" id="${codeId}">
-                <button onclick="copyCode('${codeId}')">复制</button>
+                <div class="code-block">
+                    <span class="code-label">国服:</span>
+                    <input type="text" value="${w.cnCode}" id="${cnId}">
+                    <button onclick="copyCode('${cnId}')">复制</button>
+                </div>
+                <div class="code-block">
+                    <span class="code-label">国际服:</span>
+                    <input type="text" value="${w.intlCode}" id="${intlId}">
+                    <button onclick="copyCode('${intlId}')">复制</button>
+                </div>
             </div>
         `;
         list.appendChild(card);
@@ -224,7 +254,7 @@ function showCategory(index) {
 function copyCode(id) {
     const input = document.getElementById(id);
     input.select();
-    input.setSelectionRange(0, 99999); // 手机端兼容
+    input.setSelectionRange(0, 99999); // 手机兼容
     document.execCommand("copy");
     alert("已复制: " + input.value);
 }
