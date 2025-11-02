@@ -11,28 +11,25 @@ body {
     display: flex;
     height: 100vh;
 }
-
-/* 左侧小分类 */
 .sidebar {
-    width: 150px;
+    width: 180px;
     background-color: #2c3e50;
     color: white;
     padding: 10px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 6px;
 }
 .category {
     background-color: #34495e;
-    padding: 5px;
+    padding: 8px;
     text-align: center;
     border-radius: 4px;
     cursor: pointer;
+    user-select: none;
 }
 .category:hover { background-color: #1abc9c; }
-
-/* 左下角按钮容器 */
 .sidebar-buttons {
     margin-top: auto;
     display: flex;
@@ -40,42 +37,38 @@ body {
     gap: 5px;
 }
 .sidebar-buttons button {
-    padding: 5px;
+    padding: 8px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     color: white;
+    font-size: 14px;
 }
 #contact-btn { background-color: #3498db; }
 #publish-btn { background-color: #2ecc71; }
-
-/* 右侧区域 */
 .content, .contact-page, .publish-page {
     flex: 1;
     padding: 15px;
     box-sizing: border-box;
     overflow-y: auto;
 }
-
-/* 武器卡片 */
 .weapon-card {
     background-color: #ecf0f1;
     border-radius: 8px;
     margin-bottom: 20px;
+    overflow: hidden;
 }
 .weapon-image {
     width: 100%;
     aspect-ratio: 6 / 2;
     object-fit: cover;
-    border-radius: 8px 8px 0 0;
 }
 .weapon-info {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: #bdc3c7;
-    padding: 5px 10px;
-    border-radius: 0 0 8px 8px;
+    padding: 8px 10px;
     font-size: 14px;
 }
 .weapon-info input {
@@ -89,10 +82,8 @@ body {
     margin-left: 10px;
     white-space: nowrap;
 }
-
-/* 联系和发布页面样式 */
 .contact-page, .publish-page {
-    display: none; /* 默认隐藏 */
+    display: none;
 }
 button.back-btn {
     margin-top: 10px;
@@ -107,44 +98,21 @@ button.back-btn {
 </head>
 <body>
 
-<div class="sidebar">
-    <!-- 10个小分类 -->
-    <div class="category" onclick="showCategory(0)">分类1</div>
-    <div class="category" onclick="showCategory(1)">分类2</div>
-    <div class="category" onclick="showCategory(2)">分类3</div>
-    <div class="category" onclick="showCategory(3)">分类4</div>
-    <div class="category" onclick="showCategory(4)">分类5</div>
-    <div class="category" onclick="showCategory(5)">分类6</div>
-    <div class="category" onclick="showCategory(6)">分类7</div>
-    <div class="category" onclick="showCategory(7)">分类8</div>
-    <div class="category" onclick="showCategory(8)">分类9</div>
-    <div class="category" onclick="showCategory(9)">分类10</div>
+<div class="sidebar" id="sidebar"></div>
 
-    <!-- 左下角按钮 -->
-    <div class="sidebar-buttons">
-        <button id="contact-btn" onclick="showContact()">联系投稿</button>
-        <button id="publish-btn" onclick="showPublish()">发布要求</button>
-    </div>
-</div>
+<div class="content" id="weapon-list"></div>
 
-<!-- 主内容 -->
-<div class="content" id="weapon-list">
-    <!-- 武器卡片会在这里生成 -->
-</div>
-
-<!-- 联系我们页面 -->
 <div class="contact-page" id="contact-page">
     <h1>联系投稿</h1>
-    <!-- 图片卡片示例 -->
     <div class="weapon-card">
-        <img src="https://via.placeholder.com/600x200?text=联系投稿图片1" class="weapon-image">
+        <img src="联系投稿图片1.png" class="weapon-image">
         <div class="weapon-info">
             <input type="text" value="这里输入联系投稿说明1">
             <span class="rating">⭐⭐⭐⭐⭐</span>
         </div>
     </div>
     <div class="weapon-card">
-        <img src="https://via.placeholder.com/600x200?text=联系投稿图片2" class="weapon-image">
+        <img src="联系投稿图片2.png" class="weapon-image">
         <div class="weapon-info">
             <input type="text" value="这里输入联系投稿说明2">
             <span class="rating">⭐⭐⭐⭐⭐</span>
@@ -153,10 +121,8 @@ button.back-btn {
     <button class="back-btn" onclick="showMain()">返回主页面</button>
 </div>
 
-<!-- 发布要求页面 -->
 <div class="publish-page" id="publish-page">
     <h1>发布要求</h1>
-    <!-- 图片卡片示例 -->
     <div class="weapon-card">
         <img src="发布说明.png" class="weapon-image">
         <div class="weapon-info">
@@ -165,7 +131,7 @@ button.back-btn {
         </div>
     </div>
     <div class="weapon-card">
-        <img src="https://via.placeholder.com/600x200?text=发布要求图片2" class="weapon-image">
+        <img src="发布要求图片2.png" class="weapon-image">
         <div class="weapon-info">
             <input type="text" value="这里输入发布要求说明2">
             <span class="rating">⭐⭐⭐⭐⭐</span>
@@ -175,18 +141,38 @@ button.back-btn {
 </div>
 
 <script>
-// 示例占位数据
-const categories = Array.from({length: 10}, (_, i) => `分类${i+1}`);
+const categories = [
+    '步枪', '冲锋枪', '狙击枪', '散弹枪', '手枪', '精确射击步枪', '轻机枪'
+];
+
+const sidebar = document.getElementById('sidebar');
+
+// 动态生成左侧分类按钮
+categories.forEach((name, index) => {
+    const div = document.createElement('div');
+    div.className = 'category';
+    div.innerText = name;
+    div.onclick = () => showCategory(index);
+    sidebar.appendChild(div);
+});
+
+// 添加联系投稿和发布要求按钮
+const sidebarButtons = document.createElement('div');
+sidebarButtons.className = 'sidebar-buttons';
+sidebarButtons.innerHTML = `
+    <button id="contact-btn" onclick="showContact()">联系投稿</button>
+    <button id="publish-btn" onclick="showPublish()">发布要求</button>
+`;
+sidebar.appendChild(sidebarButtons);
+
 const weapons = Array.from({length: 5}, (_, i) => ({
-    img: 'https://via.placeholder.com/600x200?text=图片',
+    img: '图片' + (i+1) + '.png',
     text: `这里输入武器说明 ${i+1}`,
     rating: '⭐⭐⭐⭐⭐'
 }));
 
 function showCategory(index) {
-    // 显示主页面内容，隐藏其他页面
     showMain();
-
     const list = document.getElementById('weapon-list');
     list.innerHTML = '';
     weapons.forEach(w => {
@@ -203,31 +189,27 @@ function showCategory(index) {
     });
 }
 
-// 显示主页面
 function showMain() {
     document.getElementById('weapon-list').style.display = 'block';
     document.getElementById('contact-page').style.display = 'none';
     document.getElementById('publish-page').style.display = 'none';
 }
 
-// 显示联系我们
 function showContact() {
     document.getElementById('weapon-list').style.display = 'none';
     document.getElementById('contact-page').style.display = 'block';
     document.getElementById('publish-page').style.display = 'none';
 }
 
-// 显示发布要求
 function showPublish() {
     document.getElementById('weapon-list').style.display = 'none';
     document.getElementById('contact-page').style.display = 'none';
     document.getElementById('publish-page').style.display = 'block';
 }
 
-// 默认显示第一个分类
+// 默认显示第一分类
 showCategory(0);
 </script>
 
 </body>
 </html>
-
