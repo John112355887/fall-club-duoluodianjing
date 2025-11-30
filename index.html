@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>天宝三角洲工坊</title>
+<style>
+  :root{
+    --sidebar:#2c3e50;   /* 深色主色（侧栏/主色） */
+    --cat:#34495e;       /* 分类色 / 边框色 */
+    --cat-hover:#1abc9c; /* 悬停高亮 */
+    --btn:#3498db;       /* 按钮蓝 */
+    --btn2:#2ecc71;      /* 按钮绿 */
+    --muted:#8f9aa4;
+    --panel:#ecf0f1;     /* 内容面板背景，和你原来一致 */
+    --card:#ffffff;
+    --dark:#111;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--panel);color:#222}
+  /* header 使用改枪配色：深色背景，白字，字体稍大并向下推 */
+  header{
+    background:var(--sidebar);
+    color:#fff;
+    padding:44px 20px 14px 20px; /* 向下推标题 */
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:sticky;
+    top:0;
+    z-index:50;
+    border-bottom:4px solid rgba(0,0,0,0.06);
+  }
+  header h1{margin:0;font-size:44px;font-weight:800;letter-spacing:2px}
+  /* 主格子区域 */
+  .main-wrap{height:calc(100vh - 110px); display:flex;align-items:center;justify-content:center;padding:18px}
+  .grid{
+    width:100%;
+    max-width:1400px;
+    height:100%;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    grid-auto-rows:1fr; /* 两行平均高 */
+    gap:26px;
+    align-items:stretch;
+  }
+  /* 方块风格与改枪页面风格统一（浅面板 + 深色边框 + 深色文字） */
+  .box{
+    background:var(--card);
+    border-radius:18px;
+    border:6px solid var(--cat);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:26px;
+    cursor:pointer;
+    user-select:none;
+    padding:12px;
+    text-align:center;
+    box-shadow:0 10px 24px rgba(0,0,0,0.06);
+    transition:transform .12s ease, box-shadow .12s ease, border-color .12s;
+    color:var(--sidebar);
+    font-weight:700;
+  }
+  .box:hover{transform:translateY(-6px);border-color:var(--cat-hover);color:#000}
+  .box.large-text{font-size:30px}
+  @media (max-width:1100px){
+    .grid{grid-template-columns:repeat(2,1fr); gap:18px}
+    header h1{font-size:32px}
+    .main-wrap{padding:12px}
+  }
+
+  /* 全屏面板 */
+  .panel-full{
+    position:fixed;
+    top:0;left:0;right:0;bottom:0;
+    background:linear-gradient(180deg,#fff,#f7f9fb);
+    z-index:120;
+    padding:18px;
+    display:none;
+    overflow:auto;
+  }
+  .panel-full.active{display:block}
+  .panel-inner{
+    width:96%;
+    max-width:1400px;
+    margin:22px auto;
+    background:var(--card);
+    border-radius:12px;
+    padding:18px;
+    box-shadow:0 12px 30px rgba(0,0,0,.08);
+    border:1px solid #eee;
+  }
+  .back-btn{
+    position:fixed;
+    left:14px;
+    top:14px;
+    z-index:130;
+    background:var(--cat);
+    color:#fff;
+    border:none;
+    padding:12px 16px;
+    border-radius:8px;
+    cursor:pointer;
+    box-shadow:0 6px 12px rgba(0,0,0,.12);
+    font-size:15px;
+  }
+
+  /* 改枪模块（外观与逻辑保持你原始代码风格） */
+  .gun-wrap{display:flex;gap:12px;flex-direction:row}
+  .g-sidebar{width:200px;background:var(--sidebar);color:#fff;padding:12px;border-radius:8px;display:flex;flex-direction:column}
+  .g-logo{text-align:center;font-weight:800;margin-bottom:10px;font-size:16px}
+  .g-cat{background:var(--cat);padding:10px;border-radius:6px;margin-bottom:8px;cursor:pointer;text-align:center;color:#fff}
+  .g-cat:hover{background:var(--cat-hover);color:#000}
+  .g-buttons{margin-top:auto;display:flex;flex-direction:column;gap:8px}
+  .g-buttons button{padding:10px;border-radius:6px;border:none;cursor:pointer;color:#fff;font-weight:700}
+  .g-main{flex:1;background:var(--panel);border-radius:8px;padding:14px;min-height:540px;overflow:auto}
+  .weapon-card{background:var(--card);border-radius:10px;padding:12px;margin-bottom:14px;border:1px solid #d0d7da}
+  /* 横向展示（landscape）——更接近期望的“横向截图”效果 */
+  .weapon-image{
+    display:block;
+    margin:12px auto;
+    width:720px;              /* 桌面展示时的横幅宽度 */
+    max-width:100%;
+    aspect-ratio:16/9;        /* 横向 16:9 */
+    object-fit:cover;
+    border-radius:10px;
+    border:1px solid #ccc;
+    box-shadow:0 8px 18px rgba(0,0,0,0.06);
+  }
+  @media (max-width:900px){
+    .weapon-image{width:90%;aspect-ratio:16/9}
+  }
+
+  .weapon-info{display:flex;justify-content:space-between;align-items:center;padding:10px;background:#dfe6e9;border-radius:6px}
+  .weapon-info input{flex:1;border:none;background:transparent;font-size:16px}
+  .weapon-code{display:flex;gap:8px;padding:10px;flex-wrap:wrap}
+  .code-block{flex:1;background:#f3f6f7;padding:8px;border-radius:6px;display:flex;align-items:center;gap:8px;min-width:220px}
+  .small{font-size:13px;color:var(--muted)}
+
+  /* 占位样式 */
+  .placeholder-title{font-size:22px;margin-bottom:10px;color:var(--sidebar)}
+  .placeholder-body{color:var(--muted);line-height:1.6}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>天宝三角洲工坊</h1>
+</header>
+
+<div class="main-wrap">
+  <div class="grid" id="grid">
+    <div class="box large-text" data-key="m1">xxx内容</div>
+    <div class="box large-text" data-key="m2">xxx</div>
+    <div class="box large-text" data-key="m3">xxx</div>
+    <div class="box large-text" data-key="gun">改枪方案</div>
+    <div class="box large-text" data-key="m5">xxx</div>
+    <div class="box large-text" data-key="m6">xxx</div>
+    <div class="box large-text" data-key="m7">xxx</div>
+    <div class="box large-text" data-key="m8">xxx</div>
+  </div>
+</div>
+
+<button class="back-btn" id="backBtn" style="display:none">返回</button>
+
+<div class="panel-full" id="panel">
+  <div class="panel-inner" id="panelInner"></div>
+</div>
+
+<script>
+  // 主交互（打开/关闭全屏面板）
+  (function(){
+    const boxes = document.querySelectorAll('.box');
+    const panel = document.getElementById('panel');
+    const panelInner = document.getElementById('panelInner');
+    const backBtn = document.getElementById('backBtn');
+    const header = document.querySelector('header');
+    const mainWrap = document.querySelector('.main-wrap');
+
+    function openPanel(key){
+      header.style.display = 'none';
+      mainWrap.style.display = 'none';
+      backBtn.style.display = 'block';
+      panel.classList.add('active');
+      if(key === 'gun'){
+        panelInner.innerHTML = `<div id="gun-app-root" style="margin-top:4px"></div>`;
+        const root = document.getElementById('gun-app-root');
+        initGunApp(root); // 每次打开都会初始化（幂等）
+      } else {
+        panelInner.innerHTML = `
+          <div>
+            <div class="placeholder-title">模块：${key}</div>
+            <div class="placeholder-body">
+              <p>这里是 <strong>${key}</strong> 的全屏展示占位。可放长期不变的内容，例如地图打法、起装推荐、升级材料一览等。</p>
+              <p>按左上角“返回”或按 Esc 关闭回到格子页。</p>
+            </div>
+          </div>
+        `;
+      }
+      panel.scrollTop = 0;
+    }
+
+    function closePanel(){
+      panel.classList.remove('active');
+      backBtn.style.display = 'none';
+      header.style.display = '';
+      mainWrap.style.display = '';
+      // 不主动销毁 panelInner；下次打开会被覆盖并重新初始化
+    }
+
+    boxes.forEach(b=>{
+      b.addEventListener('click', ()=>{
+        openPanel(b.getAttribute('data-key'));
+      });
+    });
+
+    backBtn.addEventListener('click', closePanel);
+    document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape'){ closePanel(); } });
+  })();
+
+
+  /***********************
+   * 改枪模块初始化函数 initGunApp(root)
+   * 每次打开都会被调用，作用域完全在 root 内，避免残留
+   ***********************/
+  function initGunApp(root){
+    if(!root) return;
+    // 清空 root，确保幂等
+    root.innerHTML = '';
+
+    // 主布局
+    const wrap = document.createElement('div');
+    wrap.className = 'gun-wrap';
+
+    // 侧栏
+    const sidebar = document.createElement('div');
+    sidebar.className = 'g-sidebar';
+    sidebar.innerHTML = `<div class="g-logo">三角洲改枪</div><div id="g-cats"></div><div class="g-buttons"><button id="g-contact" style="background:var(--btn)">联系投稿</button><button id="g-publish" style="background:var(--btn2)">发布要求</button></div>`;
+
+    // 主体区域
+    const gmain = document.createElement('div');
+    gmain.className = 'g-main';
+    gmain.innerHTML = `<div id="g-list"></div><div id="g-contact-page" style="display:none"></div><div id="g-publish-page" style="display:none"></div>`;
+
+    wrap.appendChild(sidebar);
+    wrap.appendChild(gmain);
+    root.appendChild(wrap);
+
+    // 数据（示例）
+    const categories = ['步枪','冲锋枪','狙击枪','散弹枪','手枪','精确射击步枪','轻机枪'];
+    const weapons = Array.from({length:10},(_,i)=>({
+      img:'图片'+(i+1)+'.png',
+      text:`这里输入武器说明 ${i+1}`,
+      cnCode:`国服改枪码 ${i+1}`,
+      intlCode:`国际服改枪码 ${i+1}`,
+      rating:'⭐⭐⭐⭐⭐'
+    }));
+
+    const catsEl = sidebar.querySelector('#g-cats');
+    const listEl = gmain.querySelector('#g-list');
+    const contactEl = gmain.querySelector('#g-contact-page');
+    const publishEl = gmain.querySelector('#g-publish-page');
+
+    // 渲染分类
+    catsEl.innerHTML = '';
+    categories.forEach((c, idx)=>{
+      const d = document.createElement('div');
+      d.className = 'g-cat';
+      d.textContent = c;
+      d.addEventListener('click', ()=> showCategory(idx));
+      catsEl.appendChild(d);
+    });
+
+    // contact 填充
+    contactEl.innerHTML = `
+      <div class="weapon-card">
+        <img src="联系投稿图片1.png" class="weapon-image" alt="">
+        <div class="weapon-info">
+          <input type="text" value="这里输入联系投稿说明1">
+          <span class="small">⭐⭐⭐⭐⭐</span>
+        </div>
+        <div class="weapon-code">
+          <div class="code-block">
+            <span class="small muted">国服:</span>
+            <input type="text" value="国服改枪码示例1" id="g-cn-contact1">
+            <button class="btn" data-copy-id="g-cn-contact1" style="background:var(--btn);color:#fff">复制</button>
+          </div>
+          <div class="code-block">
+            <span class="small muted">国际服:</span>
+            <input type="text" value="国际服改枪码示例1" id="g-int-contact1">
+            <button class="btn" data-copy-id="g-int-contact1" style="background:var(--btn);color:#fff">复制</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="weapon-card">
+        <img src="联系投稿图片2.png" class="weapon-image" alt="">
+        <div class="weapon-info">
+          <input type="text" value="这里输入联系投稿说明2">
+          <span class="small">⭐⭐⭐⭐⭐</span>
+        </div>
+        <div class="weapon-code">
+          <div class="code-block">
+            <span class="small muted">国服:</span>
+            <input type="text" value="国服改枪码示例2" id="g-cn-contact2">
+            <button class="btn" data-copy-id="g-cn-contact2" style="background:var(--btn);color:#fff">复制</button>
+          </div>
+          <div class="code-block">
+            <span class="small muted">国际服:</span>
+            <input type="text" value="国际服改枪码示例2" id="g-int-contact2">
+            <button class="btn" data-copy-id="g-int-contact2" style="background:var(--btn);color:#fff">复制</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // publish 填充
+    publishEl.innerHTML = `
+      <div class="weapon-card">
+        <img src="发布说明.png" class="weapon-image" alt="">
+        <div class="weapon-info">
+          <input type="text" value="这里输入发布要求说明1">
+          <span class="small">⭐⭐⭐⭐⭐</span>
+        </div>
+      </div>
+    `;
+
+    // 显示分类
+    function showCategory(index){
+      listEl.style.display = 'block';
+      contactEl.style.display = 'none';
+      publishEl.style.display = 'none';
+      listEl.innerHTML = '';
+      weapons.forEach((w,i)=>{
+        const card = document.createElement('div');
+        card.className = 'weapon-card';
+        const cnId = 'g-cn-'+index+'-'+i;
+        const intlId = 'g-int-'+index+'-'+i;
+        card.innerHTML = `
+          <img src="${w.img}" class="weapon-image" alt="">
+          <div class="weapon-info">
+            <input type="text" value="${escapeHtml(w.text)}">
+            <span class="small">${w.rating}</span>
+          </div>
+          <div class="weapon-code">
+            <div class="code-block">
+              <span class="small muted">国服:</span>
+              <input type="text" value="${escapeHtml(w.cnCode)}" id="${cnId}">
+              <button class="btn" data-id="${cnId}" style="background:var(--btn);color:#fff">复制</button>
+            </div>
+            <div class="code-block">
+              <span class="small muted">国际服:</span>
+              <input type="text" value="${escapeHtml(w.intlCode)}" id="${intlId}">
+              <button class="btn" data-id="${intlId}" style="background:var(--btn);color:#fff">复制</button>
+            </div>
+          </div>
+        `;
+        listEl.appendChild(card);
+      });
+
+      // 绑定复制
+      listEl.querySelectorAll('button[data-id]').forEach(btn=>{
+        btn.addEventListener('click', function(){
+          const id = this.getAttribute('data-id');
+          const input = document.getElementById(id);
+          const val = input ? input.value : '';
+          copyWithFallback(input, val);
+        });
+      });
+    }
+
+    // contact / publish 按钮事件
+    sidebar.querySelector('#g-contact').addEventListener('click', ()=>{
+      listEl.style.display = 'none';
+      publishEl.style.display = 'none';
+      contactEl.style.display = 'block';
+      // bind contact copy buttons
+      contactEl.querySelectorAll('button[data-copy-id]').forEach(b=>{
+        b.addEventListener('click', function(){
+          const id = this.getAttribute('data-copy-id');
+          const input = document.getElementById(id);
+          const val = input ? input.value : '';
+          copyWithFallback(input, val);
+        });
+      });
+    });
+    sidebar.querySelector('#g-publish').addEventListener('click', ()=>{
+      listEl.style.display = 'none';
+      contactEl.style.display = 'none';
+      publishEl.style.display = 'block';
+    });
+
+    function copyWithFallback(input, val){
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(val).then(()=> alert('已复制: ' + val)).catch(()=> fallback(input, val));
+      } else {
+        fallback(input, val);
+      }
+    }
+    function fallback(input, val){
+      try{
+        if(input){
+          input.select();
+          document.execCommand('copy');
+          alert('已复制: ' + input.value);
+        } else {
+          prompt('请手动复制下面内容：', val);
+        }
+      }catch(e){
+        prompt('请手动复制下面内容：', val);
+      }
+    }
+    function escapeHtml(s){
+      return (s+'').replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m] });
+    }
+
+    // 默认显示第一个分类
+    showCategory(0);
+  } // end initGunApp
+</script>
+
+</body>
+</html>
+
